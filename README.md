@@ -241,7 +241,7 @@ input:focus { border-color:var(--accent-bright); }
 const firebaseConfig = {
   apiKey: "AIzaSyBNYS0KGLhUiF128w20vAEYKasQ97g9tKg",
   authDomain: "taverna-do-corvo-rosa.firebaseapp.com",
-  databaseURL: "https://console.firebase.google.com/u/0/project/taverna-do-corvo-rosa/database/taverna-do-corvo-rosa-default-rtdb/data/~2F",
+  databaseURL: "https://taverna-do-corvo-rosa-default-rtdb.firebaseio.com/",
   projectId: "taverna-do-corvo-rosa",
   storageBucket: "taverna-do-corvo-rosa.firebasestorage.app",
   messagingSenderId: "526970799571",
