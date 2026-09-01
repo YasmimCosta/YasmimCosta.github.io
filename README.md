@@ -251,8 +251,8 @@ const firebaseConfig = {
   projectId: "taverna-do-corvo-rosa",
   storageBucket: "taverna-do-corvo-rosa.firebasestorage.app",
   messagingSenderId: "526970799571",
-  appId: "1:526970799571:web:cf46d52e5b94913d035b26",
-  measurementId: "G-LCNX57DY96"
+  appId: "1:526970799571:web:41c59f5d37863bf0035b26",
+  measurementId: "G-LTRSPFWV4X"
 };
 
 // Initialize Firebase
