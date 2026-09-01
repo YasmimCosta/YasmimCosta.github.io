@@ -237,27 +237,29 @@ input:focus { border-color:var(--accent-bright); }
    Veja o passo a passo que o Claude te enviou para gerar este objeto
    em https://console.firebase.google.com
    ====================================================================== */
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyBNYS0KGLhUiF128w20vAEYKasQ97g9tKg",
-  authDomain: "taverna-do-corvo-rosa.firebaseapp.com",
-  projectId: "taverna-do-corvo-rosa",
-  storageBucket: "taverna-do-corvo-rosa.firebasestorage.app",
-  messagingSenderId: "526970799571",
-  appId: "1:526970799571:web:41c59f5d37863bf0035b26",
-  measurementId: "G-LTRSPFWV4X"
-};
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBNYS0KGLhUiF128w20vAEYKasQ97g9tKg",
+    authDomain: "taverna-do-corvo-rosa.firebaseapp.com",
+    projectId: "taverna-do-corvo-rosa",
+    storageBucket: "taverna-do-corvo-rosa.firebasestorage.app",
+    messagingSenderId: "526970799571",
+    appId: "1:526970799571:web:41c59f5d37863bf0035b26",
+    measurementId: "G-LTRSPFWV4X"
+  };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
 
 (function(){
   let currentUser = null;
