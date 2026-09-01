@@ -233,33 +233,22 @@ input:focus { border-color:var(--accent-bright); }
 
 <script>
 /* ======================================================================
-   1) CONFIGURAÇÃO DO FIREBASE — TROQUE PELOS SEUS DADOS
-   Veja o passo a passo que o Claude te enviou para gerar este objeto
-   em https://console.firebase.google.com
+   CONFIGURAÇÃO DO FIREBASE
+   O databaseURL abaixo precisa ser colado à mão: abra o Firebase Console
+   > Realtime Database, e copie a URL mostrada no topo da página
+   (algo como https://taverna-do-corvo-rosa-default-rtdb.firebaseio.com)
    ====================================================================== */
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyBNYS0KGLhUiF128w20vAEYKasQ97g9tKg",
-    authDomain: "taverna-do-corvo-rosa.firebaseapp.com",
-    projectId: "taverna-do-corvo-rosa",
-    storageBucket: "taverna-do-corvo-rosa.firebasestorage.app",
-    messagingSenderId: "526970799571",
-    appId: "1:526970799571:web:41c59f5d37863bf0035b26",
-    measurementId: "G-LTRSPFWV4X"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBNYS0KGLhUiF128w20vAEYKasQ97g9tKg",
+  authDomain: "taverna-do-corvo-rosa.firebaseapp.com",
+  databaseURL: "https://console.firebase.google.com/u/0/project/taverna-do-corvo-rosa/database/taverna-do-corvo-rosa-default-rtdb/data/~2F",
+  projectId: "taverna-do-corvo-rosa",
+  storageBucket: "taverna-do-corvo-rosa.firebasestorage.app",
+  messagingSenderId: "526970799571",
+  appId: "1:526970799571:web:41c59f5d37863bf0035b26"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
 (function(){
   let currentUser = null;
