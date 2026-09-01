@@ -108,7 +108,7 @@ input:focus { border-color:var(--accent-bright); }
 
 <div class="signboard">
   <span class="torch">🌸</span>
-  <h1>A Taverna da Rosa Rendada</h1>
+  <h1>A Taverna do Corvo Rosa</h1>
   <span class="torch">🌸</span>
   <p>sua guilda, seus dados, sua mesa — sempre de portas abertas</p>
 </div>
