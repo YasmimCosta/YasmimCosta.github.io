@@ -42,6 +42,12 @@ h1,h2,h3,.display { font-family:'Cinzel', serif; }
 .presence strong { display:block; color:var(--heading); font-weight:600; margin-bottom:6px; font-size:12px; }
 .logout-link { display:inline-block; margin-top:14px; font-size:12px; color:var(--muted); text-decoration:underline; cursor:pointer; background:none; border:none; padding:0; font-family:'EB Garamond',serif; }
 .main { flex:1; padding:22px 26px 40px; min-height:480px; }
+.main-flex { display:flex; gap:18px; align-items:flex-start; }
+.panel-container { flex:1; min-width:0; }
+.mini-chat { display:none; width:230px; flex-shrink:0; flex-direction:column; background:var(--panel); border:1px solid var(--panel-line); border-radius:8px; padding:12px; position:sticky; top:22px; }
+.mini-chat-header { font-family:'Cinzel',serif; font-size:13px; color:var(--heading); margin-bottom:8px; }
+.mini-chat .chatlog { height:360px; margin-bottom:10px; padding:4px; border-bottom:1px solid var(--panel-line); }
+.mini-chat .msg .text { font-size:14px; }
 .panel { display:none; }
 .panel.active { display:block; }
 .card { background:var(--panel); border:1px solid var(--panel-line); border-radius:8px; padding:20px 22px; box-shadow:0 2px 10px rgba(168,57,94,0.06); }
@@ -56,6 +62,7 @@ h1,h2,h3,.display { font-family:'Cinzel', serif; }
 .row { display:flex; gap:8px; }
 input[type=text], input[type=url], input[type=number], input[type=email], input[type=password], textarea, .select { flex:1; background:var(--white); border:1px solid var(--panel-line); color:var(--ink); font-family:'EB Garamond',serif; font-size:15px; padding:9px 12px; border-radius:6px; outline:none; }
 input:focus, textarea:focus { border-color:var(--accent-bright); }
+input[type=color] { width:44px; height:34px; padding:2px; border:1px solid var(--panel-line); border-radius:6px; background:var(--white); cursor:pointer; }
 .btn { background:linear-gradient(180deg, #ecb0c3, var(--accent-bright)); color:#3f1728; border:1px solid #b9647f; font-family:'Cinzel',serif; font-weight:600; font-size:13px; letter-spacing:0.4px; padding:9px 16px; border-radius:6px; cursor:pointer; white-space:nowrap; }
 .btn:hover { filter:brightness(1.05); }
 .btn.ghost { background:transparent; color:var(--heading); border:1px solid var(--accent-bright); }
@@ -99,7 +106,7 @@ input:focus, textarea:focus { border-color:var(--accent-bright); }
 .board-wrap { border:1px solid var(--panel-line); border-radius:8px; overflow:hidden; background:var(--white); }
 .board { position:relative; width:100%; aspect-ratio:4/3; background-size:cover; background-position:center; background-color:#fdf3f6; background-image: repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(196,110,140,0.18) 40px), repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(196,110,140,0.18) 40px); touch-action:none; }
 .token { position:absolute; width:40px; height:40px; margin-left:-20px; margin-top:-20px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-family:'Cinzel',serif; font-weight:700; font-size:13px; cursor:grab; border:2px solid rgba(255,255,255,0.85); box-shadow:0 2px 6px rgba(0,0,0,0.25); user-select:none; }
-.token.selected { outline:3px solid var(--heading); }
+.token.selected, .prop-img.selected { outline:3px solid var(--heading); }
 .sheet-tab-chip { background:var(--white); border:1px solid var(--panel-line); border-radius:16px; padding:6px 14px; font-size:13px; cursor:pointer; color:var(--ink); }
 .sheet-tab-chip.active { background:var(--accent-soft); border-color:var(--accent-bright); color:var(--heading); font-weight:600; }
 .attr-row, .inv-row { display:flex; gap:8px; margin-bottom:6px; align-items:center; }
@@ -109,7 +116,7 @@ input:focus, textarea:focus { border-color:var(--accent-bright); }
 .hp-box .label { font-size:13px; color:var(--muted); }
 ::-webkit-scrollbar { width:8px; }
 ::-webkit-scrollbar-thumb { background:var(--wood-light); border-radius:4px; }
-@media (max-width:640px){ .layout{flex-direction:column;} .nav{width:100%; display:flex; flex-wrap:wrap; border-bottom:1px solid var(--panel-line);} .nav button{width:auto;} .presence{display:none;} }
+@media (max-width:640px){ .layout{flex-direction:column;} .nav{width:100%; display:flex; flex-wrap:wrap; border-bottom:1px solid var(--panel-line);} .nav button{width:auto;} .presence{display:none;} .mini-chat{display:none !important;} }
 </style>
 </head>
 <body>
@@ -155,6 +162,7 @@ input:focus, textarea:focus { border-color:var(--accent-bright); }
     <button class="navbtn" data-tab="music"><span class="icon">🎻</span> Bardo</button>
     <button class="navbtn" data-tab="tabletop"><span class="icon">🗺️</span> Mesa</button>
     <button class="navbtn" data-tab="sheet"><span class="icon">📜</span> Ficha</button>
+    <button class="navbtn" data-tab="profile"><span class="icon">🪞</span> Perfil</button>
     <button class="navbtn" data-tab="ambience"><span class="icon">🌷</span> Ventos</button>
     <div class="presence">
       <strong>Na mesa agora</strong>
@@ -164,6 +172,8 @@ input:focus, textarea:focus { border-color:var(--accent-bright); }
   </nav>
 
   <main class="main">
+   <div class="main-flex">
+    <div class="panel-container">
 
     <section class="panel active" id="panel-chat">
       <div class="card">
@@ -242,8 +252,12 @@ input:focus, textarea:focus { border-color:var(--accent-bright); }
           <button class="btn" id="token-add">Adicionar marcador</button>
           <button class="btn ghost" id="token-remove" disabled>Remover selecionado</button>
         </div>
+        <div class="row" style="margin-bottom:14px;">
+          <input type="text" id="propimg-input" placeholder="Cole o link de uma imagem para colocar no mapa (item, pista, arte...)" />
+          <button class="btn ghost" id="propimg-add">Adicionar imagem</button>
+        </div>
         <div class="board-wrap"><div class="board" id="board"></div></div>
-        <p class="note">Clique num marcador para selecioná-lo, arraste para mover.</p>
+        <p class="note">Clique num marcador ou imagem para selecionar, arraste para mover.</p>
       </div>
     </section>
 
@@ -257,9 +271,13 @@ input:focus, textarea:focus { border-color:var(--accent-bright); }
         </div>
         <div id="sheet-empty" class="empty">Você ainda não tem nenhuma ficha. Crie uma para começar!</div>
         <div id="sheet-editor" style="display:none;">
-          <div class="row" style="margin-bottom:16px;">
+          <div class="row" style="margin-bottom:12px;">
             <input type="text" id="sheet-name" placeholder="Nome do personagem" />
             <button class="btn ghost" id="sheet-delete">Excluir ficha</button>
+          </div>
+          <div class="row" style="margin-bottom:16px;">
+            <input type="text" id="sheet-class" placeholder="Classe (ex: Guerreiro, Mago...)" />
+            <input type="text" id="sheet-system" placeholder="Sistema de RPG (ex: D&D 5e, Tormenta20...)" />
           </div>
           <div style="display:flex; gap:24px; flex-wrap:wrap; margin-bottom:10px;">
             <div class="hp-box">
@@ -286,11 +304,54 @@ input:focus, textarea:focus { border-color:var(--accent-bright); }
           <div id="sheet-inventory"></div>
           <button class="btn ghost small" id="inv-add">+ item</button>
 
+          <h3 class="h3sec">Habilidades e Magias</h3>
+          <div id="sheet-abilities"></div>
+          <button class="btn ghost small" id="ability-add">+ habilidade/magia</button>
+
           <h3 class="h3sec">Anotações</h3>
           <textarea id="sheet-notes" rows="4" placeholder="Histórico, magias, observações..."></textarea>
 
           <div id="sheet-saved" style="font-size:12px; color:var(--muted); margin-top:10px;">&nbsp;</div>
         </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-profile">
+      <div class="card">
+        <h2 class="h2">Seu Perfil</h2>
+        <p class="sub">como você aparece para o resto da mesa</p>
+        <div id="profile-banner" style="height:110px; border-radius:8px; background:#f2c9d8; position:relative; margin-bottom:44px;">
+          <div id="profile-avatar" style="width:76px; height:76px; border-radius:50%; background:var(--white) center/cover no-repeat; border:3px solid var(--panel); position:absolute; left:20px; bottom:-30px; box-shadow:0 2px 8px rgba(0,0,0,0.18);"></div>
+        </div>
+        <div class="row" style="margin-bottom:12px;">
+          <div style="flex:1;">
+            <div class="note" style="margin:0 0 4px;">Nome de usuário</div>
+            <input type="text" id="profile-name" maxlength="24" />
+          </div>
+        </div>
+        <div class="row" style="margin-bottom:12px;">
+          <div style="flex:1;">
+            <div class="note" style="margin:0 0 4px;">URL da foto de perfil</div>
+            <input type="text" id="profile-avatar-url" placeholder="https://..." />
+          </div>
+        </div>
+        <div class="row" style="margin-bottom:12px;">
+          <div style="flex:1;">
+            <div class="note" style="margin:0 0 4px;">URL da imagem de banner (opcional)</div>
+            <input type="text" id="profile-banner-url" placeholder="https://..." />
+          </div>
+        </div>
+        <div class="row" style="margin-bottom:6px; align-items:center; gap:26px; flex-wrap:wrap;">
+          <div>
+            <div class="note" style="margin:0 0 4px;">Cor do banner</div>
+            <input type="color" id="profile-banner-color" />
+          </div>
+          <div>
+            <div class="note" style="margin:0 0 4px;">Cor de destaque (seu nome no chat)</div>
+            <input type="color" id="profile-accent-color" />
+          </div>
+        </div>
+        <div id="profile-saved" class="note">&nbsp;</div>
       </div>
     </section>
 
@@ -316,6 +377,18 @@ input:focus, textarea:focus { border-color:var(--accent-bright); }
       </div>
     </section>
 
+    </div>
+
+    <aside class="mini-chat" id="mini-chat">
+      <div class="mini-chat-header">💬 Salão</div>
+      <div class="chatlog" id="mini-chatlog"><div class="empty">Sem mensagens ainda.</div></div>
+      <div class="row">
+        <input type="text" id="mini-chat-input" placeholder="Falar..." maxlength="500" />
+        <button class="btn small" id="mini-chat-send">➤</button>
+      </div>
+    </aside>
+
+   </div>
   </main>
 </div>
 
@@ -340,7 +413,6 @@ const auth = firebase.auth();
   let currentUser = null;
   let currentUid = null;
   let lastAmbienceType = undefined;
-  let selectedToken = null;
   let selectedColor = '#c85f82';
 
   function esc(s){ const d=document.createElement('div'); d.textContent = String(s==null?'':s); return d.innerHTML; }
@@ -395,8 +467,11 @@ const auth = firebase.auth();
     errEl.style.display = 'none';
     if(!name){ errEl.textContent='Diga como quer ser chamado.'; errEl.style.display='block'; return; }
     if(!email || !password){ errEl.textContent='Preencha e-mail e senha.'; errEl.style.display='block'; return; }
+    pendingSignupName = name.slice(0,24);
     auth.createUserWithEmailAndPassword(email, password)
-      .then(cred => cred.user.updateProfile({ displayName: name.slice(0,24) }))
+      .then(cred => db.ref('users/'+cred.user.uid+'/profile').set({
+        name: pendingSignupName, avatarUrl:'', bannerColor:'#f2c9d8', bannerUrl:'', accentColor:'#a8395e'
+      }))
       .catch(err => { errEl.textContent = authErrorMessage(err); errEl.style.display='block'; });
   });
 
@@ -411,33 +486,103 @@ const auth = firebase.auth();
   });
 
   document.getElementById('logout-btn').addEventListener('click', function(){
-    if(currentUid){ db.ref('presence/'+currentUid).remove(); db.ref('users/'+currentUid+'/sheets').off(); }
+    if(currentUid){
+      db.ref('presence/'+currentUid).remove();
+      db.ref('users/'+currentUid+'/sheets').off();
+      db.ref('users/'+currentUid+'/profile').off();
+    }
     auth.signOut();
   });
 
+  let pendingSignupName = null;
+  let currentProfile = { name:'', avatarUrl:'', bannerColor:'#f2c9d8', bannerUrl:'', accentColor:'#a8395e' };
+
   auth.onAuthStateChanged(function(user){
     if(user){
-      currentUser = user.displayName || (user.email ? user.email.split('@')[0] : 'Viajante');
       currentUid = user.uid;
       document.getElementById('auth-overlay').style.display = 'none';
-      registerPresence();
-      startListeners();
-      startSheetsListener();
+      db.ref('users/'+currentUid+'/profile').once('value').then(snap=>{
+        let profile = snap.val();
+        if(!profile){
+          profile = {
+            name: pendingSignupName || user.displayName || (user.email ? user.email.split('@')[0] : 'Viajante'),
+            avatarUrl:'', bannerColor:'#f2c9d8', bannerUrl:'', accentColor:'#a8395e'
+          };
+          db.ref('users/'+currentUid+'/profile').set(profile).catch(err=>showError('profile.create', err));
+        }
+        pendingSignupName = null;
+        applyProfile(profile);
+        registerPresence();
+        startListeners();
+        startSheetsListener();
+        db.ref('users/'+currentUid+'/profile').on('value', s=>{
+          if(s.val()){ applyProfile(s.val()); updatePresenceFields(); }
+        }, err=>showError('profile.read', err));
+      }).catch(err=>showError('profile.load', err));
     } else {
       currentUser = null; currentUid = null;
       document.getElementById('auth-overlay').style.display = 'flex';
     }
   });
 
+  function applyProfile(profile){
+    currentProfile = Object.assign({ name:currentUser||'', avatarUrl:'', bannerColor:'#f2c9d8', bannerUrl:'', accentColor:'#a8395e' }, profile||{});
+    currentUser = currentProfile.name;
+    renderProfileForm();
+  }
+
+  function renderProfileForm(){
+    if(document.getElementById('profile-name').value !== currentProfile.name) document.getElementById('profile-name').value = currentProfile.name;
+    if(document.activeElement.id !== 'profile-avatar-url') document.getElementById('profile-avatar-url').value = currentProfile.avatarUrl || '';
+    if(document.activeElement.id !== 'profile-banner-url') document.getElementById('profile-banner-url').value = currentProfile.bannerUrl || '';
+    document.getElementById('profile-banner-color').value = currentProfile.bannerColor || '#f2c9d8';
+    document.getElementById('profile-accent-color').value = currentProfile.accentColor || '#a8395e';
+    const banner = document.getElementById('profile-banner');
+    banner.style.background = currentProfile.bannerUrl
+      ? ('center/cover no-repeat url("'+currentProfile.bannerUrl.replace(/"/g,'')+'")')
+      : currentProfile.bannerColor;
+    const avatar = document.getElementById('profile-avatar');
+    avatar.style.backgroundImage = currentProfile.avatarUrl ? 'url("'+currentProfile.avatarUrl.replace(/"/g,'')+'")' : 'none';
+  }
+
+  ['profile-name','profile-avatar-url','profile-banner-url','profile-banner-color','profile-accent-color'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', function(){
+      currentProfile.name = document.getElementById('profile-name').value.trim().slice(0,24) || currentUser;
+      currentProfile.avatarUrl = document.getElementById('profile-avatar-url').value.trim();
+      currentProfile.bannerUrl = document.getElementById('profile-banner-url').value.trim();
+      currentProfile.bannerColor = document.getElementById('profile-banner-color').value;
+      currentProfile.accentColor = document.getElementById('profile-accent-color').value;
+      renderProfileForm();
+      scheduleProfileSave();
+    });
+  });
+
+  let profileSaveTimer = null;
+  function scheduleProfileSave(){
+    clearTimeout(profileSaveTimer);
+    profileSaveTimer = setTimeout(()=>{
+      db.ref('users/'+currentUid+'/profile').set(currentProfile).then(()=>{
+        currentUser = currentProfile.name;
+        updatePresenceFields();
+        document.getElementById('profile-saved').textContent = 'Salvo ✓ '+new Date().toLocaleTimeString('pt-BR');
+      }).catch(err=>showError('profile.save', err));
+    }, 700);
+  }
+
+  function updatePresenceFields(){
+    if(!currentUid) return;
+    db.ref('presence/'+currentUid).update({ name: currentUser, color: currentProfile.accentColor }).catch(()=>{});
+  }
+
   function registerPresence(){
     const ref = db.ref('presence/'+currentUid);
-    ref.set({ name: currentUser, time: firebase.database.ServerValue.TIMESTAMP }).catch(err=>showError('presence.set', err));
+    ref.set({ name: currentUser, color: currentProfile.accentColor, time: firebase.database.ServerValue.TIMESTAMP }).catch(err=>showError('presence.set', err));
     ref.onDisconnect().remove();
     db.ref('presence').on('value', snap=>{
       const val = snap.val() || {};
-      const names = Object.values(val).map(p=>p.name);
       const el = document.getElementById('presence-list');
-      el.innerHTML = names.length ? names.map(n=>'<div>• '+esc(n)+'</div>').join('') : 'ninguém ainda...';
+      const items = Object.values(val);
+      el.innerHTML = items.length ? items.map(p=>'<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+(p.color||'#a8395e')+';margin-right:6px;"></span>'+esc(p.name)+'</div>').join('') : 'ninguém ainda...';
     }, err=>showError('presence.read', err));
   }
 
@@ -447,26 +592,55 @@ const auth = firebase.auth();
       document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+      const miniChat = document.getElementById('mini-chat');
+      miniChat.style.display = (btn.dataset.tab === 'chat') ? 'none' : 'flex';
     });
   });
 
   /* ---------- CHAT ---------- */
-  function renderChat(items){
-    const log = document.getElementById('chatlog');
+  function isImageUrl(text){
+    return /^https?:\/\/\S+\.(png|jpe?g|gif|webp)(\?\S*)?$/i.test((text||'').trim());
+  }
+  function renderChatInto(elId, items){
+    const log = document.getElementById(elId);
     if(!items.length){ log.innerHTML = '<div class="empty">O salão está em silêncio. Diga algo!</div>'; return; }
     const wasAtBottom = (log.scrollTop + log.clientHeight) >= (log.scrollHeight - 30);
-    log.innerHTML = items.map(m=>'<div class="msg"><span class="name">'+esc(m.name)+'</span><span class="time">'+fmtTime(m.time)+'</span><span class="text">'+esc(m.text)+'</span></div>').join('');
+    log.innerHTML = items.map(m=>{
+      const nameColor = m.color || 'var(--heading)';
+      const charPart = m.character ? ' <span style="color:var(--muted); font-weight:400;">('+esc(m.character)+')</span>' : '';
+      const body = isImageUrl(m.text)
+        ? '<img src="'+esc(m.text)+'" style="max-width:100%; max-height:220px; border-radius:6px; margin-top:4px; display:block;" />'
+        : '<span class="text">'+esc(m.text)+'</span>';
+      return '<div class="msg"><span class="name" style="color:'+esc(nameColor)+'">'+esc(m.name)+'</span>'+charPart+'<span class="time">'+fmtTime(m.time)+'</span>'+body+'</div>';
+    }).join('');
     if(wasAtBottom) log.scrollTop = log.scrollHeight;
   }
-  document.getElementById('chat-send').addEventListener('click', sendChat);
-  document.getElementById('chat-input').addEventListener('keydown', e=>{ if(e.key==='Enter') sendChat(); });
-  function sendChat(){
-    const input = document.getElementById('chat-input');
-    const text = input.value.trim();
-    if(!text || !currentUser) return;
-    input.value='';
-    db.ref('chat').push({ name: currentUser, text: text, time: Date.now() }).catch(err=>showError('chat.push', err));
+  function renderChat(items){
+    renderChatInto('chatlog', items);
+    renderChatInto('mini-chatlog', items);
   }
+  function sendChatText(text){
+    if(!text || !currentUser) return;
+    const character = (activeSheetId && sheets[activeSheetId]) ? sheets[activeSheetId].name : null;
+    db.ref('chat').push({
+      name: currentUser, text: text, time: Date.now(),
+      color: currentProfile.accentColor, character: character
+    }).catch(err=>showError('chat.push', err));
+  }
+  document.getElementById('chat-send').addEventListener('click', function(){
+    const input = document.getElementById('chat-input');
+    sendChatText(input.value.trim()); input.value='';
+  });
+  document.getElementById('chat-input').addEventListener('keydown', e=>{
+    if(e.key==='Enter'){ sendChatText(e.target.value.trim()); e.target.value=''; }
+  });
+  document.getElementById('mini-chat-send').addEventListener('click', function(){
+    const input = document.getElementById('mini-chat-input');
+    sendChatText(input.value.trim()); input.value='';
+  });
+  document.getElementById('mini-chat-input').addEventListener('keydown', e=>{
+    if(e.key==='Enter'){ sendChatText(e.target.value.trim()); e.target.value=''; }
+  });
 
   /* ---------- DADOS ---------- */
   function renderDice(items){
@@ -707,10 +881,19 @@ const auth = firebase.auth();
     const label = (document.getElementById('token-label-input').value.trim() || currentUser.slice(0,3)).toUpperCase();
     db.ref('tabletop/tokens').push({ x: 50, y: 50, color: selectedColor, label, owner: currentUser }).catch(err=>showError('tokens.push', err));
   });
+  document.getElementById('propimg-add').addEventListener('click', function(){
+    if(!currentUser) return;
+    const input = document.getElementById('propimg-input');
+    const url = input.value.trim();
+    if(!url) return;
+    input.value = '';
+    db.ref('tabletop/images').push({ url, x: 50, y: 50, owner: currentUser }).catch(err=>showError('propimg.push', err));
+  });
+  let selectedItem = null; // { basePath, key }
   document.getElementById('token-remove').addEventListener('click', function(){
-    if(!selectedToken) return;
-    db.ref('tabletop/tokens/'+selectedToken).remove().catch(err=>showError('tokens.remove', err));
-    selectedToken = null;
+    if(!selectedItem) return;
+    db.ref(selectedItem.basePath+'/'+selectedItem.key).remove().catch(err=>showError('item.remove', err));
+    selectedItem = null;
     document.getElementById('token-remove').disabled = true;
   });
   db.ref('tabletop/map').on('value', snap=>{
@@ -720,26 +903,13 @@ const auth = firebase.auth();
     else { board.style.backgroundImage = 'none'; }
   }, err=>showError('tabletop.map.read', err));
   const boardEl = document.getElementById('board');
-  function renderTokens(tokensObj){
-    const existingKeys = new Set(Array.from(boardEl.querySelectorAll('.token')).map(t=>t.dataset.key));
-    const incomingKeys = new Set(Object.keys(tokensObj||{}));
-    existingKeys.forEach(k=>{ if(!incomingKeys.has(k)) boardEl.querySelector('[data-key="'+k+'"]').remove(); });
-    Object.entries(tokensObj||{}).forEach(([key, t])=>{
-      let el = boardEl.querySelector('[data-key="'+key+'"]');
-      if(!el){ el = document.createElement('div'); el.className = 'token'; el.dataset.key = key; attachDrag(el, key); boardEl.appendChild(el); }
-      if(el.dataset.dragging !== '1'){ el.style.left = t.x+'%'; el.style.top = t.y+'%'; }
-      el.style.background = t.color || '#c85f82';
-      el.textContent = t.label || '?';
-      el.title = t.owner ? ('marcador de '+t.owner) : '';
-    });
-  }
-  db.ref('tabletop/tokens').on('value', snap=>{ renderTokens(snap.val()); }, err=>showError('tokens.read', err));
-  function attachDrag(el, key){
+
+  function attachDragGeneric(el, key, basePath){
     el.addEventListener('pointerdown', function(e){
       e.preventDefault();
-      document.querySelectorAll('.token').forEach(t=>t.classList.remove('selected'));
+      document.querySelectorAll('.token, .prop-img').forEach(t=>t.classList.remove('selected'));
       el.classList.add('selected');
-      selectedToken = key;
+      selectedItem = { basePath, key };
       document.getElementById('token-remove').disabled = false;
       el.dataset.dragging = '1';
       el.setPointerCapture(e.pointerId);
@@ -756,12 +926,49 @@ const auth = firebase.auth();
         el.removeEventListener('pointerup', onUp);
         el.dataset.dragging = '0';
         const x = parseFloat(el.dataset.x); const y = parseFloat(el.dataset.y);
-        if(!isNaN(x) && !isNaN(y)) db.ref('tabletop/tokens/'+key).update({ x, y }).catch(err=>showError('tokens.update', err));
+        if(!isNaN(x) && !isNaN(y)) db.ref(basePath+'/'+key).update({ x, y }).catch(err=>showError('item.update', err));
       }
       el.addEventListener('pointermove', onMove);
       el.addEventListener('pointerup', onUp);
     });
   }
+
+  function renderTokens(tokensObj){
+    const existingKeys = new Set(Array.from(boardEl.querySelectorAll('.token')).map(t=>t.dataset.key));
+    const incomingKeys = new Set(Object.keys(tokensObj||{}));
+    existingKeys.forEach(k=>{ if(!incomingKeys.has(k)) boardEl.querySelector('.token[data-key="'+k+'"]').remove(); });
+    Object.entries(tokensObj||{}).forEach(([key, t])=>{
+      let el = boardEl.querySelector('.token[data-key="'+key+'"]');
+      if(!el){ el = document.createElement('div'); el.className = 'token'; el.dataset.key = key; attachDragGeneric(el, key, 'tabletop/tokens'); boardEl.appendChild(el); }
+      if(el.dataset.dragging !== '1'){ el.style.left = t.x+'%'; el.style.top = t.y+'%'; }
+      el.style.background = t.color || '#c85f82';
+      el.textContent = t.label || '?';
+      el.title = t.owner ? ('marcador de '+t.owner) : '';
+    });
+  }
+  db.ref('tabletop/tokens').on('value', snap=>{ renderTokens(snap.val()); }, err=>showError('tokens.read', err));
+
+  function renderPropImages(imgsObj){
+    const existingKeys = new Set(Array.from(boardEl.querySelectorAll('.prop-img')).map(t=>t.dataset.key));
+    const incomingKeys = new Set(Object.keys(imgsObj||{}));
+    existingKeys.forEach(k=>{ if(!incomingKeys.has(k)) boardEl.querySelector('.prop-img[data-key="'+k+'"]').remove(); });
+    Object.entries(imgsObj||{}).forEach(([key, it])=>{
+      let el = boardEl.querySelector('.prop-img[data-key="'+key+'"]');
+      if(!el){
+        el = document.createElement('img');
+        el.className = 'prop-img';
+        el.dataset.key = key;
+        el.style.position = 'absolute'; el.style.width = '90px'; el.style.marginLeft = '-45px';
+        el.style.borderRadius = '6px'; el.style.cursor = 'grab'; el.style.boxShadow = '0 2px 6px rgba(0,0,0,0.25)';
+        attachDragGeneric(el, key, 'tabletop/images');
+        boardEl.appendChild(el);
+      }
+      if(el.dataset.dragging !== '1'){ el.style.left = it.x+'%'; el.style.top = it.y+'%'; }
+      if(el.getAttribute('src') !== it.url) el.setAttribute('src', it.url);
+      el.title = it.owner ? ('imagem de '+it.owner) : '';
+    });
+  }
+  db.ref('tabletop/images').on('value', snap=>{ renderPropImages(snap.val()); }, err=>showError('propimages.read', err));
 
   /* ---------- FICHAS DE PERSONAGEM ---------- */
   let sheets = {};
@@ -789,11 +996,14 @@ const auth = firebase.auth();
     document.getElementById('sheet-empty').style.display = 'none';
     document.getElementById('sheet-editor').style.display = 'block';
     document.getElementById('sheet-name').value = data.name || '';
+    document.getElementById('sheet-class').value = data.className || '';
+    document.getElementById('sheet-system').value = data.system || '';
     document.getElementById('sheet-hp-cur').value = (data.hpCur!=null? data.hpCur : 10);
     document.getElementById('sheet-hp-max').value = (data.hpMax!=null? data.hpMax : 10);
     document.getElementById('sheet-notes').value = data.notes || '';
     renderAttrRows(data.attributes || []);
     renderInvRows(data.inventory || []);
+    renderAbilityRows(data.abilities || []);
     document.getElementById('sheet-saved').textContent = '\u00A0';
   }
 
@@ -821,6 +1031,29 @@ const auth = firebase.auth();
     });
     el.querySelectorAll('input').forEach(inp=> inp.addEventListener('input', scheduleSave));
   }
+
+  function renderAbilityRows(abilities){
+    const el = document.getElementById('sheet-abilities');
+    el.innerHTML = abilities.map(a=>
+      '<div class="attr-row" data-id="'+a.id+'"><input type="text" class="ability-name" value="'+escAttr(a.name)+'" placeholder="Nome (ex: Bola de Fogo)" style="max-width:170px;" />'+
+      '<input type="text" class="ability-desc" value="'+escAttr(a.desc)+'" placeholder="Efeito / descrição" />'+
+      '<button class="btn ghost small ability-remove">×</button></div>'
+    ).join('');
+    el.querySelectorAll('.ability-remove').forEach(btn=>{
+      btn.addEventListener('click', function(){ btn.closest('.attr-row').remove(); scheduleSave(); });
+    });
+    el.querySelectorAll('input').forEach(inp=> inp.addEventListener('input', scheduleSave));
+  }
+  document.getElementById('ability-add').addEventListener('click', function(){
+    const el = document.getElementById('sheet-abilities');
+    const id = randKey();
+    const row = document.createElement('div');
+    row.className = 'attr-row'; row.dataset.id = id;
+    row.innerHTML = '<input type="text" class="ability-name" placeholder="Nome (ex: Bola de Fogo)" style="max-width:170px;" /><input type="text" class="ability-desc" placeholder="Efeito / descrição" /><button class="btn ghost small ability-remove">×</button>';
+    el.appendChild(row);
+    row.querySelector('.ability-remove').addEventListener('click', function(){ row.remove(); scheduleSave(); });
+    row.querySelectorAll('input').forEach(inp=> inp.addEventListener('input', scheduleSave));
+  });
 
   document.getElementById('attr-add').addEventListener('click', function(){
     const el = document.getElementById('sheet-attrs');
@@ -856,14 +1089,14 @@ const auth = firebase.auth();
     });
   });
 
-  ['sheet-name','sheet-hp-cur','sheet-hp-max','sheet-notes'].forEach(id=>{
+  ['sheet-name','sheet-class','sheet-system','sheet-hp-cur','sheet-hp-max','sheet-notes'].forEach(id=>{
     document.getElementById(id).addEventListener('input', scheduleSave);
   });
 
   document.getElementById('sheet-new').addEventListener('click', function(){
     if(!currentUid) return;
     const ref = db.ref('users/'+currentUid+'/sheets').push();
-    const data = { name:'Novo Personagem', hpCur:10, hpMax:10, attributes:[], inventory:[], notes:'', updatedAt: Date.now() };
+    const data = { name:'Novo Personagem', className:'', system:'', hpCur:10, hpMax:10, attributes:[], inventory:[], abilities:[], notes:'', updatedAt: Date.now() };
     ref.set(data).then(()=>{ sheets[ref.key]=data; activeSheetId=ref.key; selectSheet(ref.key); }).catch(err=>showError('sheet.create', err));
   });
 
@@ -892,11 +1125,18 @@ const auth = firebase.auth();
       name: row.querySelector('.inv-name').value,
       qty: parseInt(row.querySelector('.inv-qty').value)||0
     }));
+    const abilities = Array.from(document.querySelectorAll('#sheet-abilities .attr-row')).map(row=>({
+      id: row.dataset.id || randKey(),
+      name: row.querySelector('.ability-name').value,
+      desc: row.querySelector('.ability-desc').value
+    }));
     const data = {
       name: document.getElementById('sheet-name').value || 'Sem nome',
+      className: document.getElementById('sheet-class').value,
+      system: document.getElementById('sheet-system').value,
       hpCur: parseInt(document.getElementById('sheet-hp-cur').value)||0,
       hpMax: parseInt(document.getElementById('sheet-hp-max').value)||0,
-      attributes, inventory,
+      attributes, inventory, abilities,
       notes: document.getElementById('sheet-notes').value,
       updatedAt: Date.now()
     };
